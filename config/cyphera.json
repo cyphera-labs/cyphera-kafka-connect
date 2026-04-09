@@ -1,0 +1,25 @@
+{
+  "policies": {
+    "ssn": {
+      "engine": "ff1",
+      "key_ref": "demo-key",
+      "tag": "T01"
+    },
+    "credit_card": {
+      "engine": "ff1",
+      "key_ref": "demo-key",
+      "tag": "T02"
+    },
+    "name": {
+      "engine": "ff1",
+      "alphabet": "alpha_lower",
+      "key_ref": "demo-key",
+      "tag": "T03"
+    }
+  },
+  "keys": {
+    "demo-key": {
+      "material": "2B7E151628AED2A6ABF7158809CF4F3C"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+name: CI
+on:
+  push: { branches: [main] }
+  pull_request: { branches: [main] }
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+      - run: mvn -B package -DskipTests
