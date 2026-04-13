@@ -50,6 +50,24 @@ public abstract class CypheraProtect<R extends ConnectRecord<R>> implements Tran
 
         if (value == null) return record;
 
+        // Raw bytes — parse as JSON map
+        if (value instanceof byte[]) {
+            try {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> map = new java.util.HashMap<>(
+                    new com.fasterxml.jackson.databind.ObjectMapper().readValue(
+                        (byte[]) value, new com.fasterxml.jackson.core.type.TypeReference<Map<String, Object>>() {}));
+                Object original = map.get(fieldName);
+                if (original instanceof String) {
+                    map.put(fieldName, client.protect((String) original, policyName));
+                }
+                byte[] result = new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsBytes(map);
+                return newRecord(record, null, result);
+            } catch (Exception e) {
+                return record; // can't parse, pass through
+            }
+        }
+
         // Schema-less (Map-based)
         if (schema == null) {
             @SuppressWarnings("unchecked")

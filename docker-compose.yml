@@ -32,6 +32,7 @@ services:
     depends_on:
       - kafka
     environment:
+      CONNECT_REST_ADVERTISED_HOST_NAME: kafka-connect
       CONNECT_BOOTSTRAP_SERVERS: kafka:29092
       CONNECT_REST_PORT: 8083
       CONNECT_GROUP_ID: cyphera-connect
