@@ -1,6 +1,7 @@
 # cyphera-kafka-connect
 
 [![CI](https://github.com/cyphera-labs/cyphera-kafka-connect/actions/workflows/ci.yml/badge.svg)](https://github.com/cyphera-labs/cyphera-kafka-connect/actions/workflows/ci.yml)
+[![Security](https://github.com/cyphera-labs/cyphera-kafka-connect/actions/workflows/codeql.yml/badge.svg)](https://github.com/cyphera-labs/cyphera-kafka-connect/actions/workflows/codeql.yml)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 
 Format-preserving encryption for [Kafka Connect](https://kafka.apache.org/documentation/#connect) — Single Message Transforms (SMTs) powered by Cyphera.
