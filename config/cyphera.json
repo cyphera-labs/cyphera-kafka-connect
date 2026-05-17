@@ -1,20 +1,20 @@
 {
-  "policies": {
+  "configurations": {
     "ssn": {
       "engine": "ff1",
       "key_ref": "demo-key",
-      "tag": "T01"
+      "header": "T01"
     },
     "credit_card": {
       "engine": "ff1",
       "key_ref": "demo-key",
-      "tag": "T02"
+      "header": "T02"
     },
     "name": {
       "engine": "ff1",
       "alphabet": "alpha_lower",
       "key_ref": "demo-key",
-      "tag": "T03"
+      "header": "T03"
     }
   },
   "keys": {
