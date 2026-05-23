@@ -14,8 +14,8 @@ import java.util.Map;
 /**
  * Kafka Connect SMT: Cyphera Access
  *
- * Accesses (decrypts) a protected field using the embedded tag.
- * No policy name needed — the tag identifies the policy.
+ * Accesses (decrypts) a protected field using the embedded header.
+ * No configuration name needed — the header identifies which configuration to use.
  *
  * Config:
  *   field.name — the field to access

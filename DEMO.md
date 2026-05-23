@@ -57,7 +57,7 @@ curl -X POST http://localhost:8083/connectors -H "Content-Type: application/json
     "transforms": "protect-ssn",
     "transforms.protect-ssn.type": "io.cyphera.kafka.connect.CypheraProtect$Value",
     "transforms.protect-ssn.field.name": "ssn",
-    "transforms.protect-ssn.policy.name": "ssn"
+    "transforms.protect-ssn.configuration.name": "ssn"
   }
 }'
 ```
@@ -81,7 +81,7 @@ docker exec -it cyphera-kafka-connect-kafka-1 \
 {"name":"Carol Davis","id":"3","email":"carol@example.com","ssn":"T01b54-Un-4zHt"}
 ```
 
-SSNs protected with format-preserving encryption. Tags embedded (`T01`). Dashes preserved. Names and emails pass through untouched.
+SSNs protected with format-preserving encryption. Headers embedded (`T01`). Dashes preserved. Names and emails pass through untouched.
 
 Alice's SSN `123-45-6789` → `T01i6J-xF-07pX` matches the cross-language vector.
 
@@ -91,7 +91,7 @@ Alice's SSN `123-45-6789` → `T01i6J-xF-07pX` matches the cross-language vector
 test-input topic → MirrorSourceConnector → CypheraProtect SMT → source.test-input topic
 ```
 
-The `CypheraProtect$Value` SMT intercepts each message, looks up the `ssn` policy, encrypts the `ssn` field with FF1, prepends the tag, and passes it through. Every other field is untouched.
+The `CypheraProtect$Value` SMT intercepts each message, looks up the `ssn` configuration, encrypts the `ssn` field with FF1, prepends the header, and passes it through. Every other field is untouched.
 
 ## Cleanup
 

@@ -26,9 +26,9 @@ public final class CypheraLoader {
     }
 
     private static Cyphera load() {
-        String path = System.getProperty("cyphera.policy.file");
+        String path = System.getProperty("cyphera.configuration.file");
         if (path == null || path.isEmpty()) {
-            path = System.getenv("CYPHERA_POLICY_FILE");
+            path = System.getenv("CYPHERA_CONFIGURATION_FILE");
         }
         if (path == null || path.isEmpty()) {
             path = "/etc/cyphera/cyphera.json";

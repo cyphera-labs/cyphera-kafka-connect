@@ -21,10 +21,10 @@ Kafka Connect REST API at **http://localhost:8083**. See [DEMO.md](DEMO.md) for 
 
 | SMT | Config | Description |
 |-----|--------|-------------|
-| `CypheraProtect$Value` | `field.name`, `policy.name` | Protect a field in message values |
-| `CypheraProtect$Key` | `field.name`, `policy.name` | Protect a field in message keys |
-| `CypheraAccess$Value` | `field.name` | Access a field in message values (tag-based) |
-| `CypheraAccess$Key` | `field.name` | Access a field in message keys (tag-based) |
+| `CypheraProtect$Value` | `field.name`, `configuration.name` | Protect a field in message values |
+| `CypheraProtect$Key` | `field.name`, `configuration.name` | Protect a field in message keys |
+| `CypheraAccess$Value` | `field.name` | Access a field in message values (header-driven) |
+| `CypheraAccess$Key` | `field.name` | Access a field in message keys (header-driven) |
 
 ## Build
 
@@ -49,7 +49,7 @@ docker build -t cyphera-kafka-connect .
    mkdir -p /opt/kafka-connect-plugins/cyphera
    cp target/cyphera-kafka-connect-0.1.0.jar /opt/kafka-connect-plugins/cyphera/
    ```
-2. Place `cyphera.json` at `/etc/cyphera/cyphera.json` (or set `CYPHERA_POLICY_FILE`)
+2. Place `cyphera.json` at `/etc/cyphera/cyphera.json` (or set `CYPHERA_CONFIGURATION_FILE`)
 3. Restart Kafka Connect workers
 
 ## Usage
@@ -67,7 +67,7 @@ Add the SMTs to any connector config:
     "transforms": "protect-ssn",
     "transforms.protect-ssn.type": "io.cyphera.kafka.connect.CypheraProtect$Value",
     "transforms.protect-ssn.field.name": "ssn",
-    "transforms.protect-ssn.policy.name": "ssn"
+    "transforms.protect-ssn.configuration.name": "ssn"
   }
 }
 ```
@@ -94,20 +94,20 @@ Add the SMTs to any connector config:
   "transforms": "protect-ssn,protect-cc",
   "transforms.protect-ssn.type": "io.cyphera.kafka.connect.CypheraProtect$Value",
   "transforms.protect-ssn.field.name": "ssn",
-  "transforms.protect-ssn.policy.name": "ssn",
+  "transforms.protect-ssn.configuration.name": "ssn",
   "transforms.protect-cc.type": "io.cyphera.kafka.connect.CypheraProtect$Value",
   "transforms.protect-cc.field.name": "credit_card",
-  "transforms.protect-cc.policy.name": "credit_card"
+  "transforms.protect-cc.configuration.name": "credit_card"
 }
 ```
 
 ## Operations
 
-### Policy Configuration
+### Configuration
 
-- Policy file: `/etc/cyphera/cyphera.json` (or `CYPHERA_POLICY_FILE` env var)
+- Configuration file: `/etc/cyphera/cyphera.json` (or `CYPHERA_CONFIGURATION_FILE` env var)
 - Set env var in the Kafka Connect worker config or Docker environment
-- Policy loaded on first transform call — restart Connect workers to reload
+- Configuration loaded on first transform call — restart Connect workers to reload
 
 ### Monitoring
 
@@ -124,16 +124,16 @@ Add the SMTs to any connector config:
 ### Troubleshooting
 
 - **Plugin not found** — JAR not in `plugin.path`. Check `GET http://localhost:8083/connector-plugins` for registered transforms.
-- **"Unknown policy"** — policy file not found or name misspelled. Check `CYPHERA_POLICY_FILE` on the worker.
+- **"Unknown configuration"** — configuration file not found or name misspelled. Check `CYPHERA_CONFIGURATION_FILE` on the worker.
 - **ClassNotFoundException** — JAR missing or corrupt. Re-copy and restart.
 
-## Policy File
+## Configuration File
 
 ```json
 {
-  "policies": {
-    "ssn": { "engine": "ff1", "key_ref": "demo-key", "tag": "T01" },
-    "credit_card": { "engine": "ff1", "key_ref": "demo-key", "tag": "T02" }
+  "configurations": {
+    "ssn": { "engine": "ff1", "key_ref": "demo-key", "header": "T01" },
+    "credit_card": { "engine": "ff1", "key_ref": "demo-key", "header": "T02" }
   },
   "keys": {
     "demo-key": { "material": "2B7E151628AED2A6ABF7158809CF4F3C" }

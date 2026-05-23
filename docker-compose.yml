@@ -47,7 +47,7 @@ services:
       CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: "false"
       CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
       CONNECT_PLUGIN_PATH: /usr/share/java,/opt/kafka-connect-plugins
-      CYPHERA_POLICY_FILE: /etc/cyphera/cyphera.json
+      CYPHERA_CONFIGURATION_FILE: /etc/cyphera/cyphera.json
     volumes:
       - ./target/cyphera-kafka-connect-0.1.0.jar:/opt/kafka-connect-plugins/cyphera/cyphera-kafka-connect-0.1.0.jar:ro
       - ./config/cyphera.json:/etc/cyphera/cyphera.json:ro

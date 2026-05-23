@@ -15,31 +15,31 @@ import java.util.Map;
  * Kafka Connect SMT: Cyphera Protect
  *
  * Protects (encrypts) a field using format-preserving encryption.
- * Output is tagged — CypheraAccess needs no policy name.
+ * Output is header-prefixed — CypheraAccess needs no configuration name.
  *
  * Config:
- *   field.name  — the field to protect
- *   policy.name — the Cyphera policy to use (e.g. "ssn")
+ *   field.name         — the field to protect
+ *   configuration.name — the Cyphera configuration to use (e.g. "ssn")
  *
  * Usage in connector config:
  *   "transforms": "protect",
  *   "transforms.protect.type": "io.cyphera.kafka.connect.CypheraProtect$Value",
  *   "transforms.protect.field.name": "ssn",
- *   "transforms.protect.policy.name": "ssn"
+ *   "transforms.protect.configuration.name": "ssn"
  */
 public abstract class CypheraProtect<R extends ConnectRecord<R>> implements Transformation<R> {
 
     private static final String FIELD_CONFIG = "field.name";
-    private static final String POLICY_CONFIG = "policy.name";
+    private static final String CONFIGURATION_CONFIG = "configuration.name";
 
     private String fieldName;
-    private String policyName;
+    private String configurationName;
     private Cyphera client;
 
     @Override
     public void configure(Map<String, ?> configs) {
         fieldName = (String) configs.get(FIELD_CONFIG);
-        policyName = (String) configs.get(POLICY_CONFIG);
+        configurationName = (String) configs.get(CONFIGURATION_CONFIG);
         client = CypheraLoader.getInstance();
     }
 
@@ -59,7 +59,7 @@ public abstract class CypheraProtect<R extends ConnectRecord<R>> implements Tran
                         (byte[]) value, new com.fasterxml.jackson.core.type.TypeReference<Map<String, Object>>() {}));
                 Object original = map.get(fieldName);
                 if (original instanceof String) {
-                    map.put(fieldName, client.protect((String) original, policyName));
+                    map.put(fieldName, client.protect((String) original, configurationName));
                 }
                 byte[] result = new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsBytes(map);
                 return newRecord(record, null, result);
@@ -74,7 +74,7 @@ public abstract class CypheraProtect<R extends ConnectRecord<R>> implements Tran
             Map<String, Object> map = new HashMap<>((Map<String, Object>) value);
             Object original = map.get(fieldName);
             if (original instanceof String) {
-                map.put(fieldName, client.protect((String) original, policyName));
+                map.put(fieldName, client.protect((String) original, configurationName));
             }
             return newRecord(record, null, map);
         }
@@ -85,7 +85,7 @@ public abstract class CypheraProtect<R extends ConnectRecord<R>> implements Tran
         for (Field field : schema.fields()) {
             Object fieldValue = struct.get(field);
             if (field.name().equals(fieldName) && fieldValue instanceof String) {
-                updated.put(field.name(), client.protect((String) fieldValue, policyName));
+                updated.put(field.name(), client.protect((String) fieldValue, configurationName));
             } else {
                 updated.put(field.name(), fieldValue);
             }
@@ -98,8 +98,8 @@ public abstract class CypheraProtect<R extends ConnectRecord<R>> implements Tran
         return new ConfigDef()
             .define(FIELD_CONFIG, ConfigDef.Type.STRING, ConfigDef.NO_DEFAULT_VALUE,
                     ConfigDef.Importance.HIGH, "Name of the field to protect")
-            .define(POLICY_CONFIG, ConfigDef.Type.STRING, ConfigDef.NO_DEFAULT_VALUE,
-                    ConfigDef.Importance.HIGH, "Cyphera policy name (e.g. ssn, credit_card)");
+            .define(CONFIGURATION_CONFIG, ConfigDef.Type.STRING, ConfigDef.NO_DEFAULT_VALUE,
+                    ConfigDef.Importance.HIGH, "Cyphera configuration name (e.g. ssn, credit_card)");
     }
 
     @Override
